@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.IUserDao">
+
+    <!--配置查询所有-->
+    <select id = "findAll" resultType="user"> <!--有了它就有了执行的SQL语句，就可以获得PreparedStatement-->
+        <!--查询所有操作-->
+        select * from user;
+    </select>
+    <!--此配置中还有封装的实体类全限定类名-->
+    <!--把这两个信息组合起来i当以成一个对象：Mapper:String domainClassPath和String sql-->
+    <!--String类型的com.itheima.IUserDao.findAll-->
+
+
+    <!--保存用户-->
+    <insert id="saveUser" parameterType="user">
+    <!--配置插入操作后，获取插入数据的id-->
+        <selectKey keyProperty="id" keyColumn="id" resultType="INT" order="AFTER">
+            select last_insert_id();
+        </selectKey>
+        insert into user(username,address,sex,birthday)values(#{username},#{address},#{sex},#{birthday});
+    </insert>
+
+    <!--更新用户-->
+    <update id="updateUser" parameterType="User">
+        update user set username=#{username}, address=#{address}, sex=#{sex}, birthday=#{birthday} where id=#{id}
+    </update>
+
+    <!--删除用户-->
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        delete from user where id = #{uid}
+    </delete>
+
+    <!--根据id查询用户-->
+    <select id="findById" parameterType="INT" resultType="com.itheima.domain.User">
+        select * from user where id = #{uid}
+    </select>
+
+    <!--根据名称模糊查询-->
+    <select id="findByName" parameterType="string" resultType="com.itheima.domain.User">
+        select * from user where username like #{name}
+        <!--
+        select * from user where username like '%${value}%'
+        -->
+    </select>
+
+    <!--获取用户的总记录条数-->
+    <select id="findTotal" resultType="int">
+        select count(id) from user
+    </select>
+
+<!--    根据QueryVo的条件查询用户-->
+    <select id="findUserByVo" parameterType="com.itheima.domain.QueryVo" resultType="com.itheima.domain.User">
+        select * from user where username like #{user.username}
+    </select>
+</mapper>
